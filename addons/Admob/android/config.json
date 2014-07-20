@@ -1,0 +1,9 @@
+{
+    "copyFiles": [
+        "AdmobPlugin.java"
+    ],
+     "libraries": [
+        "google-play-services_lib"
+    ],
+    "injectionXML": "manifest.xml"
+}
