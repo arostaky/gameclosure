@@ -21,7 +21,7 @@ public class AdmobPlugin extends Activity implements IPlugin {
 
   private Activity _activity;
   private Context mContext;
-  String AD_UNIT_ID = "put your ad unit id here";
+  String AD_UNIT_ID = "my adunitid";
   private static final String TAG = null;
   public AdView adView;
   static boolean runonce = false;
@@ -70,11 +70,6 @@ public class AdmobPlugin extends Activity implements IPlugin {
   }
 
   public synchronized void showAds() {
-   // handler.post(new Runnable(){
-   /* _activity.runOnUiThread(new Runnable() {
-      public void run() {
-          try {*/
-               //   logger.log("{Admob} Showing Ads");
     adView = new AdView(_activity);
          adView.setAdSize(AdSize.BANNER);
          adView.setAdUnitId(AD_UNIT_ID);
@@ -83,20 +78,13 @@ public class AdmobPlugin extends Activity implements IPlugin {
                  RelativeLayout.LayoutParams.WRAP_CONTENT);
          lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
          lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        // lp.setGravity(Gravity.CENTER);
          adView.setLayoutParams(lp);
         RelativeLayout layout = new RelativeLayout(_activity);
 
-         adView.loadAd(new AdRequest.Builder().addTestDevice("test device id").build());
+         adView.loadAd(new AdRequest.Builder().addTestDevice("mytest device").build());
          adView.setBackgroundColor(android.graphics.Color.TRANSPARENT);
          _activity.addContentView(layout, lp);
          layout.addView(adView);
-          // layout.setGravity(Gravity.BOTTOM | Gravity.CENTER_IN_PARENT);
-        //logger.log("resultado del activity:",tparen.toString());
-      /*    }catch (Exception e) {
-                  logger.log("{Admob} Failure while showing ads:", e.getMessage().toString());
-              }
-      }});*/
 }
 
 
