@@ -1,8 +1,15 @@
 <!--START_PLUGINS_MANIFEST-->
+<!-- Admob -->
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 <!--END_PLUGINS_MANIFEST-->
+<!--START_PLUGINS_ACTIVITY-->
+<!--END_PLUGINS_ACTIVITY-->
 <!--START_PLUGINS_APPLICATION-->
+<meta-data android:name="AD_UNIT_ID" android:value="" />
+<meta-data android:name="TEST_DEVICE" android:value="" />
+
 <activity android:name="com.google.android.gms.ads.AdActivity"
              android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
   <meta-data

@@ -1,5 +1,7 @@
 package com.tealeaf.plugin.plugins;
-
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.view.View;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -20,8 +22,9 @@ import com.tealeaf.plugin.IPlugin;
 public class AdmobPlugin extends Activity implements IPlugin {
 
   private Activity _activity;
-  private Context mContext;
-  String AD_UNIT_ID = "my adunitid";
+  public static Context mContext;
+  String admobUnitid = "";
+  String testDeviceid = "";
   private static final String TAG = null;
   public AdView adView;
   static boolean runonce = false;
@@ -33,7 +36,6 @@ public class AdmobPlugin extends Activity implements IPlugin {
 
     public void onStart() {
       showAds();
-
     }
 
     public void onStop() {
@@ -64,6 +66,18 @@ public class AdmobPlugin extends Activity implements IPlugin {
 
   public void onCreate(Activity activity, Bundle savedInstanceState) {
     _activity = activity;
+
+         PackageManager manager = _activity.getPackageManager();
+		try {
+			Bundle meta = manager.getApplicationInfo(_activity.getPackageName(), PackageManager.GET_META_DATA).metaData;
+			if (meta != null) {
+				admobUnitid = meta.get("AD_UNIT_ID").toString();
+				logger.log("{AdmobPlugin} admobID:", admobUnitid);
+				testDeviceid = meta.get("TEST_DEVICE").toString();
+			}
+		} catch (Exception e) {
+			logger.log("{AdmobPlugin} Exception on start:", e.getMessage());
+		}
   }
   public void onWindowFocusChanged(){
 
@@ -72,7 +86,7 @@ public class AdmobPlugin extends Activity implements IPlugin {
   public synchronized void showAds() {
     adView = new AdView(_activity);
          adView.setAdSize(AdSize.BANNER);
-         adView.setAdUnitId(AD_UNIT_ID);
+         adView.setAdUnitId(admobUnitid);
          RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                  RelativeLayout.LayoutParams.MATCH_PARENT,
                  RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -81,13 +95,28 @@ public class AdmobPlugin extends Activity implements IPlugin {
          adView.setLayoutParams(lp);
         RelativeLayout layout = new RelativeLayout(_activity);
 
-         adView.loadAd(new AdRequest.Builder().addTestDevice("mytest device").build());
+         adView.loadAd(new AdRequest.Builder()
+         .addTestDevice(testDeviceid)
+         .build());
          adView.setBackgroundColor(android.graphics.Color.TRANSPARENT);
          _activity.addContentView(layout, lp);
          layout.addView(adView);
+        // layout.setVisibility( View.GONE );
 }
-
-
+	public void hideAd(){
+    ((Activity)mContext).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                                adView.setVisibility( View.GONE );
+                        }});
+	}
+	public void showAd(){
+     ((Activity)mContext).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                                adView.setVisibility(View.VISIBLE);
+                        }});
+        }
 
        public AdListener adListener = new AdListener() {
         /** Called when an ad is clicked and about to return to the application. */

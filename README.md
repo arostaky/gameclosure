@@ -6,22 +6,7 @@ game closure addons and plugins
 First Addon file: Admob Plugin for banners only (beta)
 
 Usage:
-
-Include the addon in your project manifest as follow:
-----------------------
-"addons": [
-		"Admob"
-	],
------------------
-Open your Application.js file and include the plugin as follow:
----------------------------------------------
-import plugins.Admob.admob as admob;
--------------------------------------------
-
-Note: in order to add your admob id and test device you need to modify the AdmobPlugin.java.
-
-We will add more functions like : ShowAds or HideAds in the future.
-
+Please see Readme file in the folder Admob.
 If you want to colaborate with this project please do.
 
 ----------------------------------------------------------------------------------------------------------
