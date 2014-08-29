@@ -3,18 +3,26 @@ package com.tealeaf.plugin.plugins;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+
 import com.tealeaf.logger;
 import com.tealeaf.TeaLeaf;
 import com.tealeaf.EventQueue;
 import com.tealeaf.plugin.IPlugin;
 import com.tealeaf.plugin.PluginManager;
+
 import java.io.*;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import com.tealeaf.util.HTTP;
+
 import java.net.URI;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Context;
 import android.util.Log;
@@ -23,6 +31,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.SharedPreferences;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
@@ -33,13 +42,19 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 
 import android.net.Uri;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.facebook.*;
 import com.facebook.model.*;
+import com.facebook.android.R;
 import com.facebook.internal.*;
 import com.facebook.widget.*;
+import com.facebook.Session;
+import com.facebook.Session.StatusCallback;
+import com.facebook.SessionDefaultAudience;
+import com.facebook.SessionState;
 
 import java.util.Set;
 
@@ -51,8 +66,10 @@ public class FacebookPlugin implements IPlugin {
 
 	String _facebookAppID = "";
 	String _facebookDisplayName = "";
-	private static final int AUTH_PUBLISH_ACTIONS_SCORES_ACTIVITY_CODE = 103;
+		// Attributes for posting back to Facebook
 	private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
+	private static final int AUTH_PUBLISH_ACTIONS_SCORES_ACTIVITY_CODE = 103;
+	private static final String TAG = null;
 
 	private WebDialog dialog;
 	//fb score
@@ -222,7 +239,43 @@ public class FacebookPlugin implements IPlugin {
 		//application = (MyfaceApplication) getActivity().getApplication();
 		
 	}
-
+	// Show a dialog prompting the user with an explanation of why we're asking for the 
+	// publish_actions permission in order to save their scores.	
+	/*private void askForPublishActionsForScores() {
+		_activity.runOnUiThread(new Runnable() {
+			public void run() {
+		new AlertDialog.Builder(_activity)
+		.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int id) {
+				// User hit OK. Request Facebook friends permission.
+				requestPublishPermissions();				
+			}
+		})
+		.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// User hit cancel.
+				// Hide the gameOverContainer
+				//gameOverContainer.setVisibility(View.INVISIBLE);
+			}
+		})
+		.setTitle(R.string.publish_scores_dialog_title)
+		.setMessage(R.string.publish_scores_dialog_message)
+		.show();		
+	}});}*/
+	/*	void requestPublishPermissions() {
+		Log.d(TAG, "Requesting publish permissions.");
+		final Session session = Session.getActiveSession();
+        if (session != null) {
+            Session.NewPermissionsRequest newPermissionsRequest = new Session.NewPermissionsRequest(_activity, PERMISSIONS)
+                    // demonstrate how to set an audience for the publish permissions,
+                    // if none are set, this defaults to FRIENDS
+                    .setDefaultAudience(SessionDefaultAudience.FRIENDS)
+                    .setRequestCode(AUTH_PUBLISH_ACTIONS_SCORES_ACTIVITY_CODE);
+            session.requestNewPublishPermissions(newPermissionsRequest);
+        }
+    }*/
+		
 	public void onResume() {
 		// Track app active events
 		com.facebook.AppEventsLogger.activateApp(_context, _facebookAppID);
@@ -247,6 +300,7 @@ public class FacebookPlugin implements IPlugin {
 			if (meta != null) {
 				_facebookAppID = meta.get("FACEBOOK_APP_ID").toString();
 				_facebookDisplayName = meta.get("FACEBOOK_DISPLAY_NAME").toString();
+				//askForPublishActionsForScores();
 			}
 
 			_tracker = new SessionTracker(_context, new Session.StatusCallback() {
@@ -302,12 +356,11 @@ public class FacebookPlugin implements IPlugin {
 					}
 				});
 				openRequest.setDefaultAudience(SessionDefaultAudience.FRIENDS);
-				//openRequest.setPermissions(Arrays.asList("email"));
-				openRequest.setPermissions(Arrays.asList(new String[]{"email", "publish_actions"}));
-				//openRequest.setReadPermissions(Arrays.asList("publish_actions"));
+				openRequest.setPermissions(Arrays.asList("email"));
+				//openRequest.setPermissions(Arrays.asList("publish_actions"));
 				openRequest.setLoginBehavior(SessionLoginBehavior.SSO_WITH_FALLBACK);
-				_session.openForPublish(openRequest);
-				//_session.openForRead(openRequest);
+
+				_session.openForRead(openRequest);
 			}
 		} else {
 			PluginManager.sendResponse(new LoginEvent("open"), null, requestId);
@@ -523,7 +576,7 @@ public class FacebookPlugin implements IPlugin {
 	   try {
 		   opts	= new JSONObject(json);
 	   } catch (JSONException e) {
-			
+
 	   }
 	   String message = "";
 	   String title = null;
@@ -639,13 +692,41 @@ public class FacebookPlugin implements IPlugin {
 										logger.log("{facebook}", "Posting Score to Facebook failed", errorMessage);
 										//((HomeActivity)getActivity()).handleError(error, false);
 									} else {
-										_session.getPermissions().contains("publish_actions");
-										Session.NewPermissionsRequest newPermissionsRequest = new Session.NewPermissionsRequest(_activity, PERMISSIONS)
-            							.setDefaultAudience(SessionDefaultAudience.FRIENDS)
-            							.setRequestCode(AUTH_PUBLISH_ACTIONS_SCORES_ACTIVITY_CODE);
-           								 _session.requestNewPublishPermissions(newPermissionsRequest);
-										//.setRequestCode(AUTH_PUBLISH_ACTIONS_SCORES_ACTIVITY_CODE);
-						                //_session.openForWrite(openRequest);
+										//_activity.runOnUiThread(new Runnable() {
+											//public void run() {
+										try {
+										new AlertDialog.Builder(_activity)
+										.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int id) {
+												// User hit OK. Request Facebook friends permission.
+												Log.d(TAG, "Requesting publish permissions.");
+												final Session session = Session.getActiveSession();
+										        if (session != null) {
+										            Session.NewPermissionsRequest newPermissionsRequest = new Session.NewPermissionsRequest(_activity, PERMISSIONS)
+										                    // demonstrate how to set an audience for the publish permissions,
+										                    // if none are set, this defaults to FRIENDS
+										                    .setDefaultAudience(SessionDefaultAudience.FRIENDS)
+										                    .setRequestCode(AUTH_PUBLISH_ACTIONS_SCORES_ACTIVITY_CODE);
+										            session.requestNewPublishPermissions(newPermissionsRequest);
+										        }				
+											}
+										})
+										.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
+											public void onClick(DialogInterface dialog, int id) {
+												// User hit cancel.
+												// Hide the gameOverContainer
+												//gameOverContainer.setVisibility(View.INVISIBLE);
+											}
+										})
+										.setTitle(R.string.publish_scores_dialog_title)
+										.setMessage(R.string.publish_scores_dialog_message)
+										.show();		
+									//}});
+										logger.log("{facebook} Requesting open");
+										}catch(Exception e) {
+										logger.log("{facebook} Exception while processing event PostScores permissions:", e.getMessage());
+										}
 										completed = true;
 										logger.log("{facebook}", "Score posted successfully to Facebook");
 										PluginManager.sendResponse(new PostScoreEvent(scoreInt, completed), null, requestId);

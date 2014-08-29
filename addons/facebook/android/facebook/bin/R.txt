@@ -132,8 +132,11 @@ int string com_facebook_requesterror_web_login 0x7f070014
 int string com_facebook_usersettingsfragment_log_in_button 0x7f070008
 int string com_facebook_usersettingsfragment_logged_in 0x7f070009
 int string com_facebook_usersettingsfragment_not_logged_in 0x7f07000a
+int string dialog_no 0x7f07001c
+int string dialog_yes 0x7f07001b
 int string leaderboard_dialog_message 0x7f07001a
 int string publish_scores_dialog_message 0x7f070019
+int string publish_scores_dialog_title 0x7f07001d
 int style com_facebook_loginview_default_style 0x7f080000
 int style com_facebook_loginview_silver_style 0x7f080001
 int[] styleable com_facebook_friend_picker_fragment { 0x7f010007 }

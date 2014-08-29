@@ -23,7 +23,7 @@ var _appID;
 
 var FB = {};
 wrapFBCall( "api", "getLoginStatus", "getAuthResponse", "getAccessToken", "getUserID",
-			"login", "logout", "share", "publish", "addFriend", "init", "ui");
+			"login", "logout", "share", "publish", "addFriend", "init", "ui","publish_actions");
 
 function wrapFBCall() {
 	for (var i = 0, n = arguments.length; i < n; ++i) {
@@ -70,7 +70,7 @@ function _onload() {
 		status : true,
 		cookie : true,
 		xfbml  : false,
-		//frictionlessRequests: true,
+		frictionlessRequests: true,
 		channelUrl: null,//window.location.protocol + "//" + window.location.hostname + "/facebook_channel.html",
 		oauth : true,
 		version : 'v2.0'
@@ -91,6 +91,8 @@ exports.getMe = function(cb) {
 exports.login = function(cb) {
 	//FB.login(cb, {scope: 'public_profile, user_friends, publish_actions'});
 	FB.login(cb);
+	//logger.log('este es login:',cb);
+	//FB.login(cb);
 };
 
 exports.logout = function(cb) {

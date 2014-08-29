@@ -277,8 +277,11 @@ containing a value of this type.
         public static int com_facebook_usersettingsfragment_log_in_button=0x7f070008;
         public static int com_facebook_usersettingsfragment_logged_in=0x7f070009;
         public static int com_facebook_usersettingsfragment_not_logged_in=0x7f07000a;
+        public static int dialog_no=0x7f07001c;
+        public static int dialog_yes=0x7f07001b;
         public static int leaderboard_dialog_message=0x7f07001a;
         public static int publish_scores_dialog_message=0x7f070019;
+        public static int publish_scores_dialog_title=0x7f07001d;
     }
     public static final class style {
         public static int com_facebook_loginview_default_style=0x7f080000;
